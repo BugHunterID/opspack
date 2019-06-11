@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+. script/opsFunction
+
+PACKNAME="Recsech"
+REPO="radenvodka"
+VERSION="1.6.0"
+PACKDES="Recsech is a tool for doing Footprinting & Reconnaissance "
+TAG="Scanner"
+PACKDEP="php"
+
+TARBALL="${REPO}/${PACKNAME}/archive/${VERSION}.tar.gz"
+
+downloadsource "http://github.com/${TARBALL}" PPA
+
+echo " complete"
+
+

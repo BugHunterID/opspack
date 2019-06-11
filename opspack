@@ -1,0 +1,187 @@
+#!/usr/bin/env bash
+
+
+ops_args (){
+APPNAME="Opspack"
+APP_INFO="Open source security"
+VERSION="0.0.1.beta"
+action=none
+
+
+# 01010101
+FALSE="0"
+TRUE="1"
+SUCCESS="0"
+FAILURE="1"
+
+#patternserch
+
+
+[[ "${#}" == 0 ]] && {
+
+
+  echo "Usage: ${APPNAME} [options] command"
+  echo "       ${APPNAME} --help"
+  echo "       ${APPNAME} -I [pakacge] example : ops -I dirsearch"
+
+  exit 1
+
+}
+
+
+while [[ $# -gt 0 ]];do
+	case "$1" in
+
+		-c|commit)
+			COMMIT=1
+			;;
+      '-?'|help|-h)
+cat << !
+Usage: opspack [options] command
+       opspack --help
+       opspack -I [pakacge] example : ops -I dirsearch
+
+Ops [Open source security] is a simple package manager for bug bounty
+using command line interface [CLI],that can be used to install, update, and upgrade their dependencies itself.
+
+Popular Command Tu Use:
+
+          -I|install   : Install package
+          -U|upgrade   : update database
+          -R|remove    : Remove package
+          -l|installed : List Availible pkg
+          -F|show      : Show Information pkg
+          -S|search    : Search Availible pkg
+          -v|version   : Show version pkg
+          -h|help      : Show help
+
+!
+        exit 0
+        ;;
+      -v|version|--version)
+        echo ${APPNAME}: $APP_INFO v${VERSION}
+        exit 0
+        ;;
+			-u|updatedb|--updatedb)
+        sleep 2
+        updatedatabase
+        ;;
+			-I|install|--instal)
+        pkgname="$2"
+			 installpackage
+	      ;;
+			-t|template|--template)
+				pkgname="$2"
+				maketemplate
+      	;;
+      -f|fdepends|--fdepends)
+        pkgame="$1"
+			;;
+      -l|list|--list)
+        list
+      ;;
+      -s|search|--search)
+        echo -ne "Enter the search : ";read patt; list | grep -i "$patt"
+
+
+      ;;
+
+      *)
+        OPTS[$OPTCOUNT]="$1"
+        (( OPTCOUNT++ ))
+        ;;
+    esac
+    shift
+  done
+
+}
+
+
+
+
+
+
+#PACKNAME="dirsearch"
+#REPO="maurosoria"
+#VERSION="v0.3.8"
+#PACKDES="Automatic SQL injection and database takeover tool"
+#TAG="SQL Injection"
+#PACKDEP="X"
+
+
+install ()
+{
+    #echo "2"
+    local PackscriptInstall="$1"
+    local PACKDEPENDS
+    #echo $PackscriptInstall
+    PACKNAME=`grep "PACKNAME=" ${PackscriptInstall} | grep -v \# | head -n1 | cut -d\" -f 2`
+    #echo $PACKNAME
+    PACKVER=`grep "VERSION=" $PackscriptInstall | grep -v \# | head -n1 | cut -d\" -f 2`
+    #echo $PACKVER
+    PACKDEPENDS=`grep "PACKDEP=" $PackscriptInstall | grep -v \# | head -n1 | cut -d\" -f 2`
+    #echo $PACKDEPENDS
+    PACKDES=`grep "PACKDES=" $PackscriptInstall | grep -v \# | head -n1 | cut -d\" -f 2`
+    #echo $PACKDES
+
+    #echo "3"
+    echo -e "\n$PACKNAME: "$white"$PACKDES"
+    echo -e " Depends requirements for $PACKNAME-$PACKVER $white: $PACKDEPENDS"
+    #__resultvar="$PackageDepens"
+    #eval $__resultvar="'$PackageDepens'"
+}
+
+list()
+{
+
+    pkg=${1}
+
+    find "${PackageScript}" -name "*.ops"| ( while read -r; do
+            opspackage=$(local _var=${REPLY%/*}; echo "${_var##*/}")
+            if [[ "${opspackage}" =~ "${pkg}" ]]; then
+                found="${SUCCESS}"
+                echo
+                echo  -e $red"${opspackage}"/VERSION: "$(cat "${REPLY}"|grep "VERSION"|cut -d"=" -f2| head -n1 | sed 's/^.\(.*\).$/\1/')"
+                echo  -e $white" $(cat "${REPLY}"|grep "PACKDES"|cut -d"=" -f2| sed 's/^.\(.*\).$/\1/')"
+            elif grep pkgdesc "${REPLY}"| grep -qi "${pkg}"; then
+                found="${SUCCESS}"
+                echo "$(local _var=${REPLY%/*}; echo "${_var##*/}")"
+                echo  -e $red"${opspackage}"/VERSON: "$(cat "${REPLY}"|grep "VERSION"|cut -d"=" -f2| head -n1 | sed 's/^.\(.*\).$/\1/')"
+                echo -e $white"$(cat "${REPLY}"|grep "PACKDES"| cut -d"=" -f2| sed 's/^.\(.*\).$/\1/')"
+            fi
+        done
+
+     )
+
+}
+
+
+installpackage ()
+{
+    #echo "1"
+    local pkgname=$pkgname
+    #echo $pkgname
+    #PACKNAME=`grep "PACKNAME=$pkgname"`
+    PackscriptInstall=`find ${PackageScript} -name $pkgname.ops -type f -print`
+    #echo $PackscriptInstall
+    #echo $PackageScript
+    install $PackscriptInstall
+    #test=${__resultvar}
+    sleep 1
+    echo "" ; read -p "are you want to install ${pkgname} ( y/n )" respon
+    if [[ $respon = y ]]; then
+    . $PackscriptInstall
+    fi
+
+    #echo $test
+    #echo $depens
+}
+
+
+
+if [ -e config/ops.conf ];then
+        . config/ops.conf
+fi
+
+ops_args "$@"
+set -- "${OPTS[@]}"

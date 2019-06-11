@@ -1,0 +1,58 @@
+#!/bin/bash
+
+if [ -e ../config/ops.conf ];then
+	. ../config/ops.conf
+fi
+
+downloadsource () {
+        
+        local url="$1" tarballname sourcedir
+        local section
+
+        if [ ${NODOWNLOAD:-0} -eq 1 ];then
+                return
+        fi
+
+        if [ "X$2" != "X" ];then
+                section="$2"
+        else
+                section=""
+        fi
+
+        if [ "X$3" != "X" ];then
+                outname="-O $3"
+        else
+                outname=""
+        fi
+
+
+        if [ ! -e "${Archives}" ];then
+                mkdir -vp "${Archives}"||true
+        fi
+
+        mkdir -vp "${Archives}/${PACKNAME}" 2>/dev/null||true
+        pushd "${Archives}/${PACKNAME}"
+                if ! type wget &> /dev/null;then
+                        echo "No 'wget' installed cannot download archive"
+                        popd
+                        return
+                fi
+
+                tarname="$(basename "$url")"
+                if [ -e $tarname ];then
+		#tar -xvf /root/dev/Ops/Package/tools/${PACKNAME}/${VERSION}.tar.gz
+                        popd
+                        return
+                fi
+
+                if ! wget -q --show-progress --no-check-certificate -c "$url" $outname;then
+                        echo "Download Failed Please Check Url $1!!!!!"
+                        if [ $EXITONFAIL -eq 1 ];then
+                                popd
+                                exit -1
+                        fi
+                fi
+#	tar -xvf /root/dev/Ops/Package/tools/${PACKNAME}/${VERSION}.tar.gz
+        popd
+}
+

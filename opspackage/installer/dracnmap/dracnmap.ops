@@ -1,0 +1,18 @@
+#!/bin/bash -e
+
+. script/opsFunction
+
+PACKNAME="dracnmap"
+REPO="screetsec"
+VERSION="2.2"
+PACKDES="Easy Scanner with multithread using nmap "
+TAG="Scanner"
+PACKDEP="xterm"
+
+TARBALL="${REPO}/${PACKNAME}/archive/${VERSION}.tar.gz"
+
+downloadsource "http://github.com/${TARBALL}" PPA
+
+echo " complete"
+
+

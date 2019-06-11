@@ -1,0 +1,23 @@
+#!/bin/bash -e
+
+
+. script/opsFunction
+
+PACKNAME="dirsearch"
+REPO="maurosoria"
+VERSION="v0.3.8"
+PACKDES="is a simple command line tool designed to brute force directories and files in websites."
+TAG="Bruteforce"
+PACKDEP="Python 2.7"
+
+TARBALL="${REPO}/${PACKNAME}/archive/${VERSION}.tar.gz"
+	
+downloadsource "http://github.com/${TARBALL}" PPA
+
+
+
+#tar -xvf /root/dev/Ops/Package/tools/${PACKNAME}/${VERSION}.tar.gz 
+#rm -rf /root/dev/Ops/Package/tools/${PACKNAME}/${VERSION}.tar.gz
+echo " complete"
+
+
