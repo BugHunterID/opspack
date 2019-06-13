@@ -10,12 +10,12 @@ Opspack `(Open Source Security Package)` is a simple package manager for bug bou
 
 ## Contributing with us
 
-Contributing with us making a correction or adding a tool. 
+Idea and progress start at : 9 june 2019 ( [@Screetsec](https://github.com/Screetsec) & [@Radenvodka](https://github.com/radenvodka) ) let's contribute by improving or adding tools.
 
 ##### Contribute through adding tools 
 
 1. Make a folder and file: `opspack/opspackage/installer/{package name}/{package name}.ops`
-2. Fill in file {packagename}.ops
+2. Fill in file `{packagename}.ops`
 
 ```
 #!/bin/bash -e
